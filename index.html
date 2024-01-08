@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roll Roll Roll Your Dice</title>
+    <script src = "script.js"></script>
+    <link rel = "stylesheet" type = "text/css" href = "style.css">
+</head>
+<body>
+    <h1>Roll Roll Roll Your Dice</h1>
+    <p>Roll, roll, roll your dice! Select the amount of dices you want to roll and the amount of times. Then watch your dices roll! The results of rounds will be displayed below! If you want to roll some more, click the “Roll!” button. Have Fun!</p>
+    <!-- Source: https://www.w3schools.com/html/html_forms.asp -->
+    <p>How many dices do you want to roll?</p>
+    <form>
+        <input type= "radio" id= "one" name= "amount">
+        <label>One</label><br>
+        <input type= "radio" id= "two" name= "amount">
+        <label>Two</label><br>
+        <input type= "radio" id= "three" name="amount">
+        <label>Three</label>
+    </form>
+
+    <form>
+        <label for="times">Amount of Times:</label><br>
+        <input type="text" id="amount"><br>
+        <input type="submit" value="Submit">
+    </form>
+
+    <button>Roll!</button>
+
+    <h2>Results:</h2>
+    <div id = "frequency">
+    <h3>Frequency:</h3>
+    </div>
+
+    <div id = "stats">
+    <h3>Stats:</h3>
+    </div>
+
+    <div id = "rounds">
+    <h3>Rounds:</h3>
+    </div>
+</body>
+</html>
