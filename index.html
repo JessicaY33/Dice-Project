@@ -5,7 +5,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Roll Roll Roll Your Dice</title>
-    <script src = "script.js"></script>
     <link rel = "stylesheet" type = "text/css" href = "style.css">
 </head>
 <body>
@@ -13,12 +12,12 @@
     <p>Roll, roll, roll your dice! Select the amount of dices you want to roll and the amount of times. Then watch your dices roll! The results of rounds will be displayed below! If you want to roll some more, click the “Roll!” button. Have Fun!</p>
     <!-- Source: https://www.w3schools.com/html/html_forms.asp -->
     <p>How many dices do you want to roll?</p>
-    <form>
-        <input type= "radio" id= "one" name= "amount">
+    <form name = "diceAmountForm">
+        <input type= "radio" id = "dot" name = "amount" value = "1">
         <label>One</label><br>
-        <input type= "radio" id= "two" name= "amount">
+        <input type= "radio" id = "dot" name= "amount" value = "2">
         <label>Two</label><br>
-        <input type= "radio" id= "three" name="amount">
+        <input type= "radio" id = "dot" name="amount" value = "3">
         <label>Three</label>
     </form>
 
@@ -42,5 +41,13 @@
     <div id = "rounds">
     <h3>Rounds:</h3>
     </div>
+    <script src = "script.js">
+        let amounts = document.forms["diceAmountForm"].elements["amount"];
+        for(let number in amounts){
+        amounts[number].onclick = function(){
+            alert(this.value);
+        }
+        }
+    </script>
 </body>
 </html>
