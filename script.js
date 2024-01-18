@@ -6,8 +6,12 @@ const data = [];
 const amountForm = document.getElementById("amountForm");
 const roundForm = document.getElementById("roundForm");
 
+let amountSet = false;
+let roundSet = false;
+
 let diceAmount = 0;
 let times = 0;
+
 let mean = 0;
 let median = 0;
 let mode = 0;
@@ -15,12 +19,26 @@ let mode = 0;
 console.log("active");
 
 //Source: Bonnie Chan
-function intialize()
+function initialize()
 {
  //reads the results of the form and will set up the frequency and rounds array accordingly 
+ if(amountForm.amount.value != null)
+ {
+  amountSet = true;
+ }
+ if(roundForm.amount.value != null)
+ {
+  roundSet = true;
+ }
+ if(amountSet)
+ {
   diceAmount = amountForm.amount.value;
-  times = roundForm.amount.value;
   console.log(diceAmount);
+ }
+ if(roundSet)
+ {
+  times = roundForm.amount.value;
+ }
 }
 
 //Source: https://www.w3schools.com/JS/js_random.asp
@@ -36,7 +54,15 @@ function roll() //Rolls the dice once and adds the result to the data array
 const button = document.getElementById("roll");
 button.addEventListener("click", roll);
 
-//Stat functions
+//Source: https://stackoverflow.com/questions/29755879/event-listener-for-multiple-radio-button-groups
+const dots = document.querySelectorAll("input[type=radio]");
+let dotLength = dots.length;
+while(dotLength--)
+{
+  dots[dotLength].addEventListener("click", initialize);
+}
+
+// Stat functions
 
 //Source: https://stackoverflow.com/questions/6134039/format-number-to-always-show-2-decimal-places 
 function simplify(num){ //rounds the number/result to show two decimal places
