@@ -1,5 +1,5 @@
 const stats = ["Mean", "Median", "Mode"];
-const rounds = ["Round #"];
+const round = ["Round #"];
 const frequency = [];
 const data = [];
 
@@ -10,7 +10,7 @@ let amountSet = false;
 let roundSet = false;
 
 let diceAmount = 0;
-let times = 0;
+let rounds = 0;
 
 let mean = 0;
 let median = 0;
@@ -26,19 +26,39 @@ function initialize()
  {
   amountSet = true;
  }
- if(roundForm.amount.value != null)
+ if(roundForm.rounds.value != null)
  {
   roundSet = true;
  }
  if(amountSet)
  {
   diceAmount = amountForm.amount.value;
+  disableRadios();
   console.log(diceAmount);
  }
  if(roundSet)
  {
-  times = roundForm.amount.value;
+  rounds = roundForm.rounds.value;
+  console.log(rounds);
  }
+}
+
+function disableRadios()
+{
+  const dots = document.querySelectorAll("input[type=radio]");
+  let dotLength = dots.length;
+  while(dotLength--)
+  {
+    dots[dotLength].disabled = true;
+  }
+}
+
+//Source: https://stackoverflow.com/questions/19454310/stop-form-refreshing-page-on-submit
+//Prevents the page from refreshing every time the submit button is clicked
+function formSubmit(event)
+{
+  event.preventDefault();
+  initialize();
 }
 
 //Source: https://www.w3schools.com/JS/js_random.asp
@@ -61,6 +81,8 @@ while(dotLength--)
 {
   dots[dotLength].addEventListener("click", initialize);
 }
+
+roundForm.addEventListener("submit", formSubmit);
 
 // Stat functions
 
@@ -140,18 +162,47 @@ function calMode(data)
   return mode;
 }
 
+function label(bool, num, label)
+{
+  let cellText = "";
+}
+
 //Source: https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Traversing_an_HTML_table_with_JavaScript_and_DOM_Interfaces#creating_an_html_table_dynamically
-function makeTable(row, column, data)
+function makeTable(row, column, data, labelRow, labelCol, label)
 {
     const tbl = document.createElement("table");
     const tblBody = document.createElement("tbody");
+    let cellText = "";
+    let labelSlot = 0;
 
     for (let i = 0; i < row.length; i++) {
         const row = document.createElement("tr");
-
         for (let j = 0; j < column; j++) {
-        const cell = document.createElement("td");
-        cell.appendChild(cellText);
+          const cell = document.createElement("td");
+          if(labelRow)
+          {
+            if(j == 0)
+            {
+              cellText = label[labelSlot];
+              cell.appendChild(cellText);
+              if(labelSlot < label.length)
+              {
+                labelSlot++;
+              }
+            }
+          }
+          if(labelCol)
+          {
+            if(i == 0)
+            {
+              cellText = label[labelSlot];
+              cell.appendChild(cellText);
+              if(labelSlot < label.length)
+              {
+                labelSlot++;
+              }
+            }
+          }
         row.appendChild(cell);
         }
         tblBody.appendChild(row);
