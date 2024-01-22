@@ -1,7 +1,9 @@
-const stats = ["Mean", "Median", "Mode"];
-const round = ["Round #"];
 const frequency = [];
 const data = [];
+
+let statLabel = ["Mean", "Median", "Mode"];
+let frequencyLabel = [];
+let roundsLabel = ["Round #", "Dice 1"];
 
 const amountForm = document.getElementById("amountForm");
 const roundForm = document.getElementById("roundForm");
@@ -19,22 +21,58 @@ let mode = 0;
 console.log("active");
 
 //Source: Bonnie Chan
-function initialize()
+//reads the results of the form and will set up the frequency and rounds array accordingly 
+function initializeAmount()
 {
- //reads the results of the form and will set up the frequency and rounds array accordingly 
  if(amountForm.amount.value != null)
  {
   amountSet = true;
- }
- if(roundForm.rounds.value != null)
- {
-  roundSet = true;
  }
  if(amountSet)
  {
   diceAmount = amountForm.amount.value;
   disableRadios();
   console.log(diceAmount);
+  setAmountLabels();
+}
+
+//After a dice amount is set the rounds and frequency table would update accordingly
+function setAmountLabels()
+{
+  if(diceAmount > 1)
+  {
+    roundsLabel.push("Dice 2");
+    if(diceAmount == 3)
+    {
+      roundsLabel.push("Dice 3");
+      setFrequency(3, 18);
+    }
+    else
+    {
+      setFrequency(2, 12);
+    }
+  }
+  else
+  {
+    setFrequency(1, 6);
+  }
+ }
+}
+
+//Sets dice frequency for the frequency label
+function setFrequency(min, max)
+{
+  for(let x = min; x < max; x++)
+  {
+    frequencyLabel.push(x);
+  }
+}
+
+function initializeRound()
+{
+ if(roundForm.rounds.value != null)
+ {
+  roundSet = true;
  }
  if(roundSet)
  {
@@ -58,7 +96,16 @@ function disableRadios()
 function formSubmit(event)
 {
   event.preventDefault();
-  initialize();
+  initializeRound();
+}
+
+//Once all the forms are made, it will set up the tables on the website
+function setUpTables()
+{
+  if(diceAmount != 0 && rounds != 0)
+  {
+    makeTable(3, 2, data, true, false, statLabel, "stats");
+  }
 }
 
 //Source: https://www.w3schools.com/JS/js_random.asp
@@ -79,7 +126,7 @@ const dots = document.querySelectorAll("input[type=radio]");
 let dotLength = dots.length;
 while(dotLength--)
 {
-  dots[dotLength].addEventListener("click", initialize);
+  dots[dotLength].addEventListener("click", initializeAmount);
 }
 
 roundForm.addEventListener("submit", formSubmit);
@@ -162,56 +209,56 @@ function calMode(data)
   return mode;
 }
 
-function label(bool, num, label)
-{
-  let cellText = "";
-}
-
 //Source: https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Traversing_an_HTML_table_with_JavaScript_and_DOM_Interfaces#creating_an_html_table_dynamically
-function makeTable(row, column, data, labelRow, labelCol, label)
+function makeTable(row, column, data, doLabelRow, doLabelCol, label, location)
 {
     const tbl = document.createElement("table");
     const tblBody = document.createElement("tbody");
+
+    let dataIndex = 0;
     let cellText = "";
     let labelSlot = 0;
 
-    for (let i = 0; i < row.length; i++) {
+    for (let i = 0; i < row; i++) {
         const row = document.createElement("tr");
         for (let j = 0; j < column; j++) {
           const cell = document.createElement("td");
-          if(labelRow)
+          if(doLabelRow)
           {
             if(j == 0)
             {
-              cellText = label[labelSlot];
-              cell.appendChild(cellText);
+              cellText = document.createTextNode(label[labelSlot]);
               if(labelSlot < label.length)
               {
                 labelSlot++;
               }
             }
           }
-          if(labelCol)
+          else if(doLabelCol)
           {
             if(i == 0)
             {
-              cellText = label[labelSlot];
-              cell.appendChild(cellText);
+              cellText = document.createTextNode(label[labelSlot]);
               if(labelSlot < label.length)
               {
                 labelSlot++;
               }
             }
           }
-        row.appendChild(cell);
+          else
+          {
+            cellText = document.createTextNode(data[dataIndex]);
+            if(dataIndex < data.length)
+            {
+              dataIndex++;
+            }
+          }
+          cell.appendChild(cellText);
+          row.appendChild(cell);
         }
         tblBody.appendChild(row);
     }
-
-  // put the <tbody> in the <table>
   tbl.appendChild(tblBody);
-  // appends <table> into <body>
-  document.body.appendChild(tbl);
-  // sets the border attribute of tbl to '2'
+  document.getElementById(location).appendChild(tbl);
   tbl.setAttribute("border", "2");
 }
