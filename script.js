@@ -1,3 +1,4 @@
+const statData = [];
 const frequency = [];
 const data = [];
 
@@ -17,6 +18,8 @@ let rounds = 0;
 let mean = 0;
 let median = 0;
 let mode = 0;
+let double = 0;
+let triple = 0;
 
 console.log("active");
 
@@ -33,18 +36,21 @@ function initializeAmount()
   diceAmount = amountForm.amount.value;
   disableRadios();
   console.log(diceAmount);
-  setAmountLabels();
+  setDiceLabels();
+  setUpTables();
 }
 
-//After a dice amount is set the rounds and frequency table would update accordingly
-function setAmountLabels()
+//After a dice amount is set the rounds, stat, and frequency table would update accordingly
+function setDiceLabels()
 {
   if(diceAmount > 1)
   {
     roundsLabel.push("Dice 2");
-    if(diceAmount == 3)
+    statLabel.push("Doubles");
+    if(diceAmount > 2)
     {
       roundsLabel.push("Dice 3");
+      statLabel.push("Triples");
       setFrequency(3, 18);
     }
     else
@@ -78,7 +84,17 @@ function initializeRound()
  {
   rounds = roundForm.rounds.value;
   console.log(rounds);
+  setUpTables();
  }
+}
+
+//Sets the round numbers in the round label
+function setRoundsLabel(roundNum)
+{
+  for(let x = 1; x < roundNum + 1; x++)
+  {
+    roundsLabel.push(x);
+  }
 }
 
 function disableRadios()
@@ -97,6 +113,8 @@ function formSubmit(event)
 {
   event.preventDefault();
   initializeRound();
+  document.getElementById("text").disabled = true;
+  document.getElementById("submitButton").disabled = true;
 }
 
 //Once all the forms are made, it will set up the tables on the website
@@ -104,9 +122,11 @@ function setUpTables()
 {
   if(diceAmount != 0 && rounds != 0)
   {
-    makeTable(3, 2, data, true, false, statLabel, "stats");
+    makeTable(3, 3, data, true, false, statLabel, "stats");
   }
 }
+
+//Roll Functions
 
 //Source: https://www.w3schools.com/JS/js_random.asp
 function roll() //Rolls the dice once and adds the result to the data array
@@ -117,7 +137,58 @@ function roll() //Rolls the dice once and adds the result to the data array
   console.log(data);
 }
 
-//Roll Button Function
+function startingRolls(num)
+{
+  num = num * diceAmount;
+  for(let x = 0; x < num; x++)
+  {
+    roll();
+  }
+}
+
+function doubleCounter()
+{
+  if(diceAmount == 3)
+  {
+    for(let x = 0; x < data.length; x + 3)
+    {
+      if(data[x] == data[x + 1])
+      {
+        double++;
+      }
+      else if(data[x] == data[x + 2])
+      {
+        double++;
+      }
+      else if(data[x + 1] == data[x + 2])
+      {
+        double++;
+      }
+    }
+  }
+  else
+  {
+    for(let x = 0; x < data.length; x + 2)
+    {
+      if(data[x] == data[x + 1])
+      {
+        double++;
+      }
+    }
+  }
+}
+
+function tripleCounter()
+{
+  for(let x = 0; x < data.length; x + 3)
+  {
+    if((data[x] == data[x + 1]) && (data[x + 1] == data[x + 2]))
+    {
+      triple++;
+    }
+  }
+}
+
 const button = document.getElementById("roll");
 button.addEventListener("click", roll);
 
@@ -139,13 +210,13 @@ function simplify(num){ //rounds the number/result to show two decimal places
 }
 
 //Source: https://www.delftstack.com/howto/javascript/find-median-in-javascript/ 
-function organize(data) //creates an organized version of the data array, it does not effect the original
+function organizeData() //creates an organized version of the data array, it does not effect the original
 {
   const sort = data.slice().sort((a, b) => a - b); 
   return sort;
 }
 
-function calMean(data) //Calculates Mean
+function calMean() //Calculates Mean
 {
   if(data.length > 0)
   {
@@ -160,11 +231,11 @@ function calMean(data) //Calculates Mean
 }
 
 //Source: https://www.delftstack.com/howto/javascript/find-median-in-javascript/ 
-function calMedian(data) //Calculates Mean
+function calMedian() //Calculates Median
 {
   if(data.length > 0)
   {
-    const sort = organize(data);
+    const sort = organizeData();
     const middleIndex = Math.floor(sort.length/2);
     if(sort.length % 2 != 0) //if odd
     {
@@ -179,11 +250,11 @@ function calMedian(data) //Calculates Mean
 }
 
 //Source: https://stackoverflow.com/questions/52898456/simplest-way-of-finding-mode-in-javascript 
-function calMode(data)
+function calMode() //Calculates Mode
 {
   if(data.length > 0)
   {
-    const sort = organize(data);
+    const sort = organizeData();
     let bestStreak = 0; //the highest appearance of a number
     let bestNum = sort[0]; //the number that appears the most
     let currentStreak = 0; //the current streak being counted
@@ -207,6 +278,21 @@ function calMode(data)
     mode = bestNum; //mode is the number that appears the most in the data
   }
   return mode;
+}
+
+function setStatData()
+{
+  statData.push(calMean());
+  statData.push(calMedian());
+  statData.push(calMode());
+  if(diceAmount > 1)
+  {
+    statData.push(double);
+    if(diceAmount > 2)
+    {
+      statData.push(triple);
+    }
+  }
 }
 
 //Source: https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Traversing_an_HTML_table_with_JavaScript_and_DOM_Interfaces#creating_an_html_table_dynamically
